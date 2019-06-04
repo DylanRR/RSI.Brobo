@@ -112,8 +112,18 @@ class Sheet(object):
                 work_list.remove(x)
 
     def save_sheet(self):
-        file_name = input('Save As File Name:')
-        self.wb.save(file_name + '.xls')
+        save_success = False
+        while not save_success:
+            try:
+                file_name = input('Save As File Name:')
+                if "\\" in  file_name:
+                    print('\n\nFile names cannot contain a "\\"\n')
+                else:
+                    self.wb.save(file_name + '.xls')
+                    save_success = True
+            except OSError:
+                print('\n\nInvalid file name.\n')
+        print("\nSave successful")
 
     def stick_change(self):
         """Adds code to retract piece from saw, setup for trim cut, and reset pusher to home position"""
