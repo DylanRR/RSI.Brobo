@@ -12,7 +12,7 @@ def cls():
     os.system('cls')
 
 
-class Stick:
+class Stick(object):
     """Cut list for one sick of steel, list can be run multiple times"""
 
     def __init__(self, material_len, qty):
@@ -29,7 +29,7 @@ class Stick:
         self.usable_len = round(self.material_len - 6 - (sum(self.part_list) + len(self.part_list) * .098), 3)
 
 
-class Sheet:
+class Sheet(object):
     """"Class for building a new spreadsheet from the cut lists supplied from the user.
     Accepted arguments for instantiation are
         pno:Program Number(int)
