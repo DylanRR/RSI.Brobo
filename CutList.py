@@ -1,6 +1,7 @@
 import os
 import xlwt
 import colorama
+from time import sleep
 # from colorama import Fore, Back, Style
 colorama.init()
 # import curses
@@ -115,9 +116,23 @@ class Sheet(object):
         save_success = False
         while not save_success:
             try:
-                file_name = input('Save As File Name:')
+                file_name = input('Save As File Name:').lower().strip()
                 if "\\" in  file_name:
                     print('\n\nFile names cannot contain a "\\"\n')
+                elif file_name + ".xls" in os.listdir():
+                    print(f"File name {file_name}.xls already exists.")
+                    conf = False
+                    while not conf:
+                        o_write = input ("Overwrite? (y/n)\n").lower().strip()
+                        if o_write == "y":
+                            self.wb.save(file_name + '.xls')
+                            save_success = True
+                            conf = True
+                        elif o_write == "n":
+                            conf = True
+                        else:
+                            continue
+
                 else:
                     self.wb.save(file_name + '.xls')
                     save_success = True
