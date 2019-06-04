@@ -266,19 +266,19 @@ def build_cutlist(stick_len):
         print('\n\n')
 
         cut_list.add_piece(part_len, part_qty)
-    while True:
-        try:
-            list_qt = int(input('\nHow many times do you want to cut this layout?'))
-            if list_qt > 10:
-                print('\nIt would be better to make this a single cut list')
-                print('and have the operator run it as many times as they need')
-                continue
-            else:
-                cut_list.qty = list_qt
-                break
-        except ValueError:
-            print('Invalid input')
-    return cut_list
+    #while True:
+    #    try:
+    #        list_qt = int(input('\nHow many times do you want to cut this layout?'))
+    #        if list_qt > 10:
+    #            print('\nIt would be better to make this a single cut list')
+    #            print('and have the operator run it as many times as they need')
+    #            continue
+    #        else:
+    #            cut_list.qty = list_qt
+    #            break
+    #    except ValueError:
+    #        print('Invalid input')
+    #return cut_list
 
 
 def set_pno():
