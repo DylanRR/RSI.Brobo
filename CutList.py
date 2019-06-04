@@ -266,6 +266,7 @@ def build_cutlist(stick_len):
         print('\n\n')
 
         cut_list.add_piece(part_len, part_qty)
+        cut_list.qty = 1
     #while True:
     #    try:
     #        list_qt = int(input('\nHow many times do you want to cut this layout?'))
@@ -278,7 +279,7 @@ def build_cutlist(stick_len):
     #            break
     #    except ValueError:
     #        print('Invalid input')
-    #return cut_list
+    return cut_list
 
 
 def set_pno():
