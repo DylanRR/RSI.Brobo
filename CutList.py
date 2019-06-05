@@ -113,17 +113,19 @@ class Sheet(object):
                 work_list.remove(x)
 
     def save_sheet(self):
+        """Function to save to disk, validates filename and checks for duplicate files then
+        confirms if you want to overwrite"""
         save_success = False
         while not save_success:
             try:
                 file_name = input('Save As File Name:').lower().strip()
-                if "\\" in  file_name:
+                if "\\" in file_name:
                     print('\n\nFile names cannot contain a "\\"\n')
-                elif file_name + ".xls" in os.listdir():
+                elif file_name + ".xls" in os.listdir('.'):
                     print(f"File name {file_name}.xls already exists.")
                     conf = False
                     while not conf:
-                        o_write = input ("Overwrite? (y/n)\n").lower().strip()
+                        o_write = input("Overwrite? (y/n)\n").lower().strip()
                         if o_write == "y":
                             self.wb.save(file_name + '.xls')
                             save_success = True
@@ -139,6 +141,7 @@ class Sheet(object):
             except OSError:
                 print('\n\nInvalid file name.\n')
         print("\nSave successful")
+        sleep(2)
 
     def stick_change(self):
         """Adds code to retract piece from saw, setup for trim cut, and reset pusher to home position"""
@@ -266,7 +269,7 @@ def get_qty(usable_len, part_len):
 def format_list(parts_list):
     f = "Cut List"
     for i in parts_list:
-        f = f + '\033[0;30;46m[\033[0;34;46m ' + str(i) + '"\033[0;30;46m]\033[1;37;40m'
+        f = f + '\033[0;30;46m[\033[0;30;46m ' + str(i) + '"\033[0;30;46m]\033[1;37;40m'
     return f
 
 
@@ -292,7 +295,7 @@ def build_cutlist(stick_len):
 
         cut_list.add_piece(part_len, part_qty)
         cut_list.qty = 1
-    #while True:
+    # while True:
     #    try:
     #        list_qt = int(input('\nHow many times do you want to cut this layout?'))
     #        if list_qt > 10:
