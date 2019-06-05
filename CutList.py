@@ -1,3 +1,4 @@
+import sys
 import os
 import xlwt
 import colorama
@@ -407,7 +408,15 @@ def main():
             continue
 
         elif menu_choice == "7":
-            break
+            while True:
+                verify_quit = input('\nAre you sure you want to quit? ')
+                if verify_quit.lower().strip() == "y" or verify_quit.lower().strip() == "yes":
+                    sys.exit(0)
+                elif verify_quit.lower().strip() == "n" or verify_quit.lower().strip() == "no":
+                    break
+                else:
+                    print("Yes or No?")
+                    continue
         else:
             print("Invalid input")
             continue
