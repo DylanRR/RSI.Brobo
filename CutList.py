@@ -346,6 +346,13 @@ def set_jno():
 
 
 def main():
+    """stock_len gives a default value of 240 inches for the material length
+    prog_num sets the default program number to 1
+    job_number defaults to zero, zero value is uses to test if a valid value has been entered before
+    saving to disk
+    list_of_lists exists because this program can be use to write larger programs that can run
+    multiple cut lists in one program. However in our current use we are only loading one cutlist
+    per program"""
     stock_len = 240
     prog_num = 1
     job_num = 0
