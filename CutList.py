@@ -7,7 +7,7 @@ from time import sleep
 colorama.init()
 # import curses
 # import datetime
-version = 1.1
+version = 1.11
 
 
 def cls():
@@ -241,6 +241,9 @@ def get_piece(usable_len):
             part_len = round(float(input("\nPiece length in decimal inches\n")), 3)
             if part_len == 0:
                 return 0
+            elif part_len < 0:
+                print('\nNo negative numbers, this is a saw not a welder or stretcher.')
+                continue
             elif part_len >= usable_len:
                 print('\nPart is too long to fit, please use a shorter length or end the list.')
                 continue
@@ -275,7 +278,9 @@ def format_list(parts_list):
 
 
 def build_cutlist(stick_len):
-    """builds list for a single cut list while verifying parts will fit within stock"""
+    """builds list for a single cut list while verifying parts will fit within stock.
+    Commented out code that was used for multi-cutlist files after we decide to only
+    load one cutlist per file"""
     # TODO: Show cut list data entered so far
     cut_list = Stick(stick_len, 1)
 
