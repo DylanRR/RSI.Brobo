@@ -223,7 +223,7 @@ def get_stock():
             if stock_length > 306:
                 print('\nMax length is 306", please use a shorter length')
             elif stock_length < 49:
-                print('\nMinimum length is 36", do you really need to use this tool?')
+                print('\nMinimum length is 48", do you really need to use this tool?')
             elif stock_length <= 306 >= 49:
                 break
         except ValueError:
@@ -243,6 +243,9 @@ def get_piece(usable_len):
                 return 0
             elif part_len < 0:
                 print('\nNo negative numbers, this is a saw not a welder or stretcher.')
+                continue
+            elif 0 < part_len < 4:
+                print('\nPieces less than 4" are likely to jam in the vice, cut them manually')
                 continue
             elif part_len >= usable_len:
                 print('\nPart is too long to fit, please use a shorter length or end the list.')
