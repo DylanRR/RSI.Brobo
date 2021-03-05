@@ -3,11 +3,12 @@ import os
 import xlwt
 import colorama
 from time import sleep
+
 # from colorama import Fore, Back, Style
 colorama.init()
 # import curses
 # import datetime
-version = 1.11
+version = 1.13
 
 
 def cls():
@@ -118,10 +119,30 @@ class Sheet(object):
         confirms if you want to overwrite"""
         save_success = False
         while not save_success:
+            # List of invalid characters for file names
+            inv_chr = [
+                '*', '.', '/', '\\', '"', "'", ':', '[', ']', '<', '>', '|', '?', ';', '$', '#', '%', '{', '}', '!',
+                '=', '`', '@', '^'
+            ]
             try:
                 file_name = input('Save As File Name:').lower().strip()
-                if "\\" in file_name:
-                    print('\n\nFile names cannot contain a "\\"\n')
+                # test for invalid characters, sets flag true if found
+                bad_car = any(ele in file_name for ele in inv_chr)
+
+                # test for blank filename
+                if file_name == '':
+                    print('\n\nFile name cannot be blank\n')
+
+                # test length of filename
+                elif len(file_name) > 32:
+                    print('\n\nFile name is too long, keep it 32 characters or less')
+
+                # test for invalid character and reports violation to user
+                elif bad_car:
+                    for ele in inv_chr:
+                        if ele in file_name:
+                            print(f'\n\nFile names cannot contain {ele}"\n')
+
                 elif file_name + ".xls" in os.listdir('.'):
                     print(f"File name {file_name}.xls already exists.")
                     conf = False
@@ -138,6 +159,9 @@ class Sheet(object):
 
                 else:
                     self.wb.save(file_name + '.xls')
+                    '''After Saving the file we launch it with Excel because this somehow makes the file acceptable 
+                    to the DaVe uploader software'''
+                    os.system(f"start excel {file_name}.xls")
                     save_success = True
             except OSError:
                 print('\n\nInvalid file name.\n')
@@ -199,7 +223,7 @@ def build_xls(build_list, prog_no, stock_len, job):
             if total_sticks > 0:
                 new_sheet.stick_change()
     new_sheet.write_eof()
-    
+
     dir_check = os.listdir('S:/BROBO')
     if str(job) not in dir_check:
         os.mkdir('S:/BROBO/' + str(job))
@@ -322,15 +346,15 @@ def build_cutlist(stick_len):
 def set_pno():
     """sets and validates the program number from user input"""
     cls()
-    print("\n\n\nProgram Number can be any whole number from 1 - 30\n")
+    print("\n\n\nProgram Number can be any whole number from 1 - 75\n")
     while True:
         try:
             pno = int(input('Set Program Number: '))
 
-            if 31 > pno > 0:
+            if 76 > pno > 0:
                 return pno
             else:
-                print('\nvalue must be from 1-30')
+                print('\nvalue must be from 1-75')
                 continue
         except ValueError:
             print('\nYou must enter a number')
@@ -413,7 +437,7 @@ def main():
                 verify_delete = input('\033[0;37;41mAre you sure you want to delete the lists in memory?\033[1;37;40m')
                 if verify_delete.lower() == "y" or verify_delete.lower() == "yes":
                     list_of_lists = []
-                    prog_num = prog_num+1
+                    prog_num = prog_num + 1
                     break
                 elif verify_delete.lower() == "n" or verify_delete.lower() == "no":
                     break
