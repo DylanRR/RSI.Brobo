@@ -8,15 +8,52 @@ from time import sleep
 colorama.init()
 # import curses
 # import datetime
+
+
+#Define Constants
 version = 1.13
+INVALID_CHARS = ['*', '.', '/', '\\', '"', "'", ':', '[', ']', '<', '>', '|', '?', ';', '$', '#', '%', '{', '}', '!', '=', '`', '@', '^']
+BROBO_DIR = os.getcwd()
 
-
-def cls():
+#Define Helper Functions
+def clear_screen():
     os.system('cls')
 
+"""
+Check if the filename is valid.
+"""
+def is_valid_filename(filename):
+    if not filename:
+        print('\n\nFile name cannot be blank\n')
+        return False
+    if len(filename) > 32:
+        print('\n\nFile name is too long, keep it 32 characters or less')
+        return False
+    if any(char in filename for char in INVALID_CHARS):
+        print('\n\nFile names cannot contain any of the following characters: ' + ' '.join(INVALID_CHARS) + '\n')
+        return False
+    return True
 
+"""
+Check if the file already exists.
+"""
+def file_exists(filename):
+    return filename + ".xls" in os.listdir('.')
+
+"""
+Ask the user to confirm overwriting a file.
+"""
+def confirm_overwrite():
+    while True:
+        overwrite = input("Overwrite? (y/n)\n").lower().strip()
+        if overwrite in ["y", "n"]:
+            return overwrite == "y"
+
+
+"""
+Cut list for one sick of steel, list can be run multiple times.
+"""
 class Stick(object):
-    """Cut list for one sick of steel, list can be run multiple times"""
 
     def __init__(self, material_len, qty):
         self.material_len = material_len
@@ -24,27 +61,30 @@ class Stick(object):
         self.part_list = []
         self.usable_len = material_len - 7
 
+    """"
+    Function to add a quantity of pieces to cut list and update usable length.
+    """
     def add_piece(self, part_len, part_qty):
-        """"Function to add a quantity of pieces to cut list and update usable length"""
         for x in range(part_qty):
             self.part_list.append(part_len)
         self.part_list.sort()
         self.usable_len = round(self.material_len - 6 - (sum(self.part_list) + len(self.part_list) * .098), 3)
 
 
+""""
+Class for building a new spreadsheet from the cut lists supplied from the user. 
+Args:   (int) pno, Program Number
+        (float) stock, Length of stock in inches to be used for the cut list
+
+line_count is an attribute used to track the line number currently being worked on in the spreadsheet to determine
+the correct row to write to
+
+last_piece is an attribute to hold the length of the last piece of material to allow calculation of absolute
+position needed to pull the piece out of the clamp
+
+wb and ws instantiate a new workbook and worksheet to write the Excel data to.
+"""
 class Sheet(object):
-    """"Class for building a new spreadsheet from the cut lists supplied from the user.
-    Accepted arguments for instantiation are
-        pno:Program Number(int)
-        stock:Length of stock in inches to be used for the cut list (float)
-
-    line_count is an attribute used to track the line number currently being worked on in the spreadsheet to determine
-    the correct row to write to
-
-    last_piece is an attribute to hold the length of the last piece of material to allow calculation of absolute
-    position needed to pull the piece out of the clamp
-
-    wb and ws instantiate a new workbook and worksheet to write the Excel data to"""
 
     def __init__(self, pno, stock):
         self.pno = pno
@@ -54,20 +94,22 @@ class Sheet(object):
         self.wb = xlwt.Workbook()
         self.ws = self.wb.add_sheet('Tabelle1')
 
+    """
+    This takes care of the repetitive data that must be written to each row and it increments the line counter.
+        Column 0 is the axis which is always 0 for a single axis device
+        Column 1 is the program line number must be sequential
+        Column 5 is the output tool which is always tool 1
+    """
     def new_line(self):
-        """This takes care of the repetitive data that must be written to each row and it increments the line counter
-
-         Column 0 is the axis which is always 0 for a single axis device
-         Column 1 is the program line number must be sequential
-         Column 5 is the output tool which is always tool 1"""
         self.ws.write(self.line_count + 2, 0, 0)
         self.ws.write(self.line_count + 2, 1, self.line_count)
         self.ws.write(self.line_count + 2, 5, 1)
         self.line_count = self.line_count + 1
 
+    """
+    Initialize The Excel SpreadSheet with Default Fields and passes in the user defined program number.
+    """
     def int_sheet(self):
-        """Initialize The Excel SpreadSheet with Default Fields and passes in the user defined program number"""
-
         self.ws.write(0, 0, 'axis')
         self.ws.write(0, 1, 'number')
         self.ws.write(0, 2, 'demand')
@@ -79,112 +121,87 @@ class Sheet(object):
         self.ws.write(2, 0, 'Pno')
         self.ws.write(2, 1, self.pno)
 
+    """
+    Function to process cut list with at least one piece longer than 13 inches, cuts drop first,
+    """
     def drop_first(self, work_list):
-        """function to process cut list with at least one piece longer than 13 inches, cuts drop first"""
         self.new_line()
         self.ws.write(self.line_count + 1, 2, 1000 * (sum(work_list) + (len(work_list) - 1) * .098))
         self.ws.write(self.line_count + 1, 3, 1)
         self.ws.write(self.line_count + 1, 4, 0)
 
         self.last_piece = work_list.pop()
-        while len(work_list) > 0:
+        while work_list:
             self.new_line()
-            self.ws.write(self.line_count + 1, 2, 0 - min(work_list) * 1000)
-            self.ws.write(self.line_count + 1, 3, work_list.count(min(work_list)))
+            min_piece = min(work_list)
+            self.ws.write(self.line_count + 1, 2, 0 - min_piece * 1000)
+            self.ws.write(self.line_count + 1, 3, work_list.count(min_piece))
             self.ws.write(self.line_count + 1, 4, 1)
 
-            x = min(work_list)
-            while x in work_list:
-                work_list.remove(x)
+            work_list = [piece for piece in work_list if piece != min_piece]
 
+    """
+    Function to process cut list with no pieces longer than 13 inches, cuts drop last.
+    """
     def drop_last(self, work_list):
-        """function to process cut list with no pieces longer than 13 inches, cuts drop last"""
         self.new_line()
         self.ws.write(self.line_count + 1, 2, self.stock - 6)
         self.ws.write(self.line_count + 1, 3, 1)
         self.ws.write(self.line_count + 1, 4, 0)
         self.last_piece = self.stock - 4 - (sum(work_list) + (len(work_list) - 1) * .098)
-        while len(work_list) > 0:
+        
+        while work_list:
             self.new_line()
-            self.ws.write(self.line_count + 1, 2, 0 - min(work_list) * 1000)
-            self.ws.write(self.line_count + 1, 3, work_list.count(min(work_list)))
+            min_piece = min(work_list)
+            self.ws.write(self.line_count + 1, 2, 0 - min_piece * 1000)
+            self.ws.write(self.line_count + 1, 3, work_list.count(min_piece))
             self.ws.write(self.line_count + 1, 4, 1)
+            work_list = [piece for piece in work_list if piece != min_piece]
 
-            x = min(work_list)
-            while x in work_list:
-                work_list.remove(x)
-
+    """
+    Function to save to disk, validates filename and checks for duplicate files then
+    confirms if you want to overwrite.
+    """
     def save_sheet(self):
-        """Function to save to disk, validates filename and checks for duplicate files then
-        confirms if you want to overwrite"""
         save_success = False
         while not save_success:
-            # List of invalid characters for file names
-            inv_chr = [
-                '*', '.', '/', '\\', '"', "'", ':', '[', ']', '<', '>', '|', '?', ';', '$', '#', '%', '{', '}', '!',
-                '=', '`', '@', '^'
-            ]
             try:
-                file_name = input('Save As File Name:').lower().strip()
-                # test for invalid characters, sets flag true if found
-                bad_car = any(ele in file_name for ele in inv_chr)
-
-                # test for blank filename
-                if file_name == '':
-                    print('\n\nFile name cannot be blank\n')
-
-                # test length of filename
-                elif len(file_name) > 32:
-                    print('\n\nFile name is too long, keep it 32 characters or less')
-
-                # test for invalid character and reports violation to user
-                elif bad_car:
-                    for ele in inv_chr:
-                        if ele in file_name:
-                            print(f'\n\nFile names cannot contain {ele}"\n')
-
-                elif file_name + ".xls" in os.listdir('.'):
-                    print(f"File name {file_name}.xls already exists.")
-                    conf = False
-                    while not conf:
-                        o_write = input("Overwrite? (y/n)\n").lower().strip()
-                        if o_write == "y":
-                            self.wb.save(file_name + '.xls')
-                            save_success = True
-                            conf = True
-                        elif o_write == "n":
-                            conf = True
-                        else:
-                            continue
-
-                else:
-                    self.wb.save(file_name + '.xls')
-                    '''After Saving the file we launch it with Excel because this somehow makes the file acceptable 
-                    to the DaVe uploader software'''
-                    os.system(f"start excel {file_name}.xls")
-                    save_success = True
+                filename = input('Save As File Name:').lower().strip()
+                if not is_valid_filename(filename):
+                    continue
+                if file_exists(filename):
+                    print(f"File name {filename}.xls already exists.")
+                    if not confirm_overwrite():
+                        continue
+                self.wb.save(filename + '.xls')
+                os.system(f"start excel {filename}.xls")
+                save_success = True
             except OSError:
                 print('\n\nInvalid file name.\n')
         print("\nSave successful")
         sleep(2)
 
-    def stick_change(self):
-        """Adds code to retract piece from saw, setup for trim cut, and reset pusher to home position"""
+    """
+    Writes values to a new line in the worksheet.
+    """
+    def write_line(self, value2, value3, value4):
         self.new_line()
-        self.ws.write(self.line_count + 1, 2, 10000 * (self.last_piece + 6))
-        self.ws.write(self.line_count + 1, 3, 0)
-        self.ws.write(self.line_count + 1, 4, 0)
-        self.new_line()
-        self.ws.write(self.line_count + 1, 2, -6000)
-        self.ws.write(self.line_count + 1, 3, 1)
-        self.ws.write(self.line_count + 1, 4, 1)
-        self.new_line()
-        self.ws.write(self.line_count + 1, 2, 1000 * (self.stock - 6))
-        self.ws.write(self.line_count + 1, 3, 0)
-        self.ws.write(self.line_count + 1, 4, 0)
+        self.ws.write(self.line_count + 1, 2, value2)
+        self.ws.write(self.line_count + 1, 3, value3)
+        self.ws.write(self.line_count + 1, 4, value4)
 
+    """
+    Adds code to retract piece from saw, setup for trim cut, and reset pusher to home position.
+    """
+    def stick_change(self):
+        self.write_line(10000 * (self.last_piece + 6), 0, 0)
+        self.write_line(-6000, 1, 1)
+        self.write_line(1000 * (self.stock - 6), 0, 0)
+
+    """
+    Writes the End of File line to last line in the sheet.
+    """
     def write_eof(self):
-        """Writes the End of File line to last line in the sheet"""
         self.new_line()
         self.ws.write(self.line_count + 1, 2, 0)
         self.ws.write(self.line_count + 1, 3, 0)
@@ -198,42 +215,46 @@ def count_sticks(work_list):
         total_sticks = total_sticks + active_list.qty
     return total_sticks
 
+"""
+Processes an active list and updates the sheet accordingly.
+"""
+def process_active_list(new_sheet, active_list):
+    copy_list = active_list.part_list[:]
+    if max(active_list.part_list) > 13:
+        new_sheet.drop_first(copy_list)
+    elif max(active_list.part_list) <= 13:
+        new_sheet.drop_last(copy_list)
 
+"""
+Function to build XLS file from user entered cut lists.
+"""
 def build_xls(build_list, prog_no, stock_len, job):
-    """Function to build XLS file from user entered cut lists"""
-
     new_sheet = Sheet(prog_no, stock_len)
     new_sheet.int_sheet()
-
     total_sticks = count_sticks(build_list)
 
     for x in range(len(build_list)):
         active_list = build_list[x]
         for c in range(active_list.qty):
-            if max(active_list.part_list) > 13:
-                copy_list = active_list.part_list[:]
-                new_sheet.drop_first(copy_list)
-
-            elif max(active_list.part_list) <= 13:
-                copy_list = active_list.part_list[:]
-                new_sheet.drop_last(copy_list)
-
+            process_active_list(new_sheet, active_list)
             total_sticks = total_sticks - 1
 
             if total_sticks > 0:
                 new_sheet.stick_change()
     new_sheet.write_eof()
 
-    dir_check = os.listdir('S:/BROBO')
+    dir_check = os.listdir(BROBO_DIR)
     if str(job) not in dir_check:
-        os.mkdir('S:/BROBO/' + str(job))
-    os.chdir('S:/BROBO/' + str(job))
+        os.mkdir(BROBO_DIR + str(job))
+    os.chdir(BROBO_DIR + str(job))
     new_sheet.save_sheet()
 
 
+"""
+Determines what length stock will be used for cut job.
+"""
 def get_stock():
-    """determines what length stock will be used for cut job"""
-    cls()
+    clear_screen()
     print("\n\n\n")
     print('Stock length must be longer than 48" (Seriously why would you use this tool for something that small?)')
     print('Stock length cannot exceed 306". Lengths will be rounded to whole inches.')
@@ -255,11 +276,11 @@ def get_stock():
 
     return stock_length
 
-
+"""
+Function to get and validate part length, confirms it will fit within the remaining length.
+TODO add validation that confirms last piece is at least 13" if no existing pieces are at least 13" long
+"""
 def get_piece(usable_len):
-    """Function to get and validate part length, confirms it will fit within the remaining length"""
-    # TODO add validation that confirms last piece is at least 13" if no existing pieces are at least 13" long
-
     while True:
         try:
             part_len = round(float(input("\nPiece length in decimal inches\n")), 3)
@@ -280,8 +301,10 @@ def get_piece(usable_len):
             print('\nYou must enter a number, do not use " in the number, inches are assumed')
 
 
+"""
+Function to get and validate quantity of parts, confirms they will fit within the remaining length.
+"""
 def get_qty(usable_len, part_len):
-    """Function to get and validate quantity of parts, confirms they will fit within the remaining length"""
     while True:
         try:
             part_qty = int(input('Quantity\n'))
@@ -304,15 +327,17 @@ def format_list(parts_list):
     return f
 
 
+"""
+Builds list for a single cut list while verifying parts will fit within stock.
+Commented out code that was used for multi-cutlist files after we decide to only
+load one cutlist per file.
+TODO: Show cut list data entered so far
+"""
 def build_cutlist(stick_len):
-    """builds list for a single cut list while verifying parts will fit within stock.
-    Commented out code that was used for multi-cutlist files after we decide to only
-    load one cutlist per file"""
-    # TODO: Show cut list data entered so far
     cut_list = Stick(stick_len, 1)
 
     while True:
-        cls()
+        clear_screen()
         print('\033[1;32;40m\n\n\nBuilding Cut List...\033[1;37;40m\n')
         formatted_stick = format_list(cut_list.part_list)
         print(formatted_stick)
@@ -328,24 +353,13 @@ def build_cutlist(stick_len):
 
         cut_list.add_piece(part_len, part_qty)
         cut_list.qty = 1
-    # while True:
-    #    try:
-    #        list_qt = int(input('\nHow many times do you want to cut this layout?'))
-    #        if list_qt > 10:
-    #            print('\nIt would be better to make this a single cut list')
-    #            print('and have the operator run it as many times as they need')
-    #            continue
-    #        else:
-    #            cut_list.qty = list_qt
-    #            break
-    #    except ValueError:
-    #        print('Invalid input')
     return cut_list
 
-
+"""
+Sets and validates the program number from user input.
+"""
 def set_pno():
-    """sets and validates the program number from user input"""
-    cls()
+    clear_screen()
     print("\n\n\nProgram Number can be any whole number from 1 - 75\n")
     while True:
         try:
@@ -359,10 +373,11 @@ def set_pno():
         except ValueError:
             print('\nYou must enter a number')
 
-
+"""
+Set and validates the Job Number in order to save the file to the correct path.
+"""
 def set_jno():
-    """Set and validates the Job Number in order to save the file to the correct path"""
-    cls()
+    clear_screen()
     print("Job numbers must be 4 digits long")
     while True:
         try:
@@ -377,94 +392,158 @@ def set_jno():
             print('Numbers only in a job number')
 
 
+
+def get_stock():
+    while True:
+        try:
+            stock_len = float(input("Enter the stock length: "))
+            if stock_len <= 0:
+                print("Stock length must be a positive number. Please try again.")
+            else:
+                return stock_len
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+def set_pno():
+    while True:
+        try:
+            prog_num = int(input("Enter the program number: "))
+            if prog_num <= 0:
+                print("Program number must be a positive integer. Please try again.")
+            else:
+                return prog_num
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
+
+def set_jno():
+    while True:
+        try:
+            job_num = int(input("Enter the job number: "))
+            if job_num <= 0:
+                print("Job number must be a positive integer. Please try again.")
+            else:
+                return job_num
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
+
+def add_cut_list(stock_len):
+    cut_list = []
+    print("\nEnter cuts for the cut list. Enter 'done' when finished.")
+
+    while True:
+        try:
+            cut = input("Enter cut: ")
+            if cut.lower() == 'done':
+                break
+            cut = float(cut)
+            if cut <= 0 or cut > stock_len:
+                print(f"Cut must be a positive number less than or equal to stock length ({stock_len}). Please try again.")
+            else:
+                cut_list.append(cut)
+        except ValueError:
+            print("Invalid input. Please enter a number or 'done'.")
+    return cut_list  
+
+def compile_program(list_of_lists, prog_num, stock_len, job_num):
+    # Create a new program
+    program = Program(prog_num, stock_len, job_num)
+
+    # Add each cut list to the program
+    for cut_list in list_of_lists:
+        program.add_cut_list(cut_list)
+
+    # Compile the program
+    program.compile()
+
+    print(f"Program {prog_num} compiled successfully.")
+
+def start_new_program(list_of_lists, prog_num):
+    while True:
+        verify_delete = input('Are you sure you want to delete the lists in memory?')
+        if verify_delete.lower() == "y" or verify_delete.lower() == "yes":
+            list_of_lists.clear()
+            prog_num += 1
+            print(f"New program started. Program number is now {prog_num}.")
+            break
+        elif verify_delete.lower() == "n" or verify_delete.lower() == "no":
+            break
+        else:
+            print("Yes or No?")
+    return list_of_lists, prog_num
+
+def quit_program():
+    while True:
+        verify_quit = input('\nAre you sure you want to quit? ')
+        if verify_quit.lower().strip() == "y" or verify_quit.lower().strip() == "yes":
+            print("Quitting program.")
+            sys.exit(0)
+        elif verify_quit.lower().strip() == "n" or verify_quit.lower().strip() == "no":
+            break
+        else:
+            print("Yes or No?")
+
+def print_menu(version, stock_len, prog_num, job_num):
+    print(f"Version: {version}")
+    print(f"Stock Length: {stock_len}")
+    print(f"Program Number: {prog_num}")
+    print(f"Job Number: {job_num}")
+    print("1. Get Stock")
+    print("2. Set Program Number")
+    print("3. Set Job Number")
+    print("4. Add Cut List")
+    print("5. Compile Program")
+    print("6. Start New Program")
+    print("7. Quit Program")
+    
+
+"""
+This is the main loop of the program. It initializes default values for stock length, 
+program number, job number, and a list of cut lists. The stock length defaults to 240 inches, 
+the program number defaults to 1, and the job number defaults to 0 (which is used to check 
+if a valid job number has been entered before saving to disk). The list of cut lists is 
+initially empty, but can be populated with multiple cut lists to create larger programs. 
+However, in the current use case, we are only loading one cut list per program.
+
+The loop displays a menu to the user and performs actions based on the user's choice. 
+The actions include getting the stock length, setting the program number, setting the job number, 
+adding a cut list, compiling the program, starting a new program, and quitting the program.
+"""   
 def main():
-    """stock_len gives a default value of 240 inches for the material length
-    prog_num sets the default program number to 1
-    job_number defaults to zero, zero value is uses to test if a valid value has been entered before
-    saving to disk
-    list_of_lists exists because this program can be use to write larger programs that can run
-    multiple cut lists in one program. However in our current use we are only loading one cutlist
-    per program"""
     stock_len = 240
     prog_num = 1
     job_num = 0
     list_of_lists = []
-    # TODO: add an option to review cut lists
-    # TODO add option to edit cut lists
-    # TODO add ability to read in an existing spreadsheet program to be edited
+
+    actions = {
+        "1": get_stock,
+        "2": set_pno,
+        "3": set_jno,
+        "4": lambda: add_cut_list(stock_len),
+        "5": lambda: compile_program(list_of_lists, prog_num, stock_len, job_num),
+        "6": lambda: start_new_program(list_of_lists, prog_num),
+        "7": quit_program
+    }
 
     while True:
-        cls()
-        print('\nCut List Builder v' + str(version))
-        print('\033[1;37;40m \n\n\n.-------==\033[0;34;47m Menu \033[1;37;40m==-------.')
-        print('1: Set Stock Length [\033[1;32;40m ' + str(stock_len) + '"\033[1;37;40m ]')
-        print('2: Set Program #    [\033[1;32;40m ' + str(prog_num) + '\033[1;37;40m ]')
-        print('3: Set Job #        [\033[1;32;40m ' + str(job_num).zfill(4) + '\033[1;37;40m ]')
-        print('4: Add cut list to program\n5: Compile program to XLS\n6: Start New Program\n7: Quit\n')
-        menu_choice = input("What do you want to do?:")
+        clear_screen()
+        print_menu(version, stock_len, prog_num, job_num)
+        menu_choice = input("What do you want to do?: ")
+        action = actions.get(menu_choice)
 
-        if menu_choice == "1":
-            stock_len = get_stock()
-            continue
-        elif menu_choice == "2":
-            prog_num = set_pno()
-            continue
-        elif menu_choice == "3":
-            job_num = set_jno()
-            continue
-        elif menu_choice == "4" and stock_len == 0:
-            print('\nYou must set the stock length before defining any cut lists')
-            continue
-        elif menu_choice == "4":
-            print("\nUser defines cut list")
-            cut_list = build_cutlist(stock_len)
-            list_of_lists.append(cut_list)
-            continue
-        elif menu_choice == "5" and len(list_of_lists) == 0:
-            print('\nNo cut lists have been defined yet')
-            continue
-        elif menu_choice == "5" and prog_num == 0:
-            print('\nNo program number has been set')
-            continue
-        elif menu_choice == "5" and job_num == 0000:
-            print('\nNo job number has been set')
-            continue
-        elif menu_choice == "5":
-            build_xls(list_of_lists, prog_num, stock_len, job_num)
-            continue
-        elif menu_choice == "6":
-            while True:
-                verify_delete = input('\033[0;37;41mAre you sure you want to delete the lists in memory?\033[1;37;40m')
-                if verify_delete.lower() == "y" or verify_delete.lower() == "yes":
-                    list_of_lists = []
-                    prog_num = prog_num + 1
-                    break
-                elif verify_delete.lower() == "n" or verify_delete.lower() == "no":
-                    break
-                else:
-                    print("Yes or No?")
-                    continue
-            continue
-
-        elif menu_choice == "7":
-            while True:
-                verify_quit = input('\nAre you sure you want to quit? ')
-                if verify_quit.lower().strip() == "y" or verify_quit.lower().strip() == "yes":
-                    sys.exit(0)
-                elif verify_quit.lower().strip() == "n" or verify_quit.lower().strip() == "no":
-                    break
-                else:
-                    print("Yes or No?")
-                    continue
+        if action:
+            result = action()
+            if menu_choice == "1":
+                stock_len = result
+            elif menu_choice == "2":
+                prog_num = result
+            elif menu_choice == "3":
+                job_num = result
+            elif menu_choice == "4":
+                list_of_lists.append(result)
+            elif menu_choice == "6":
+                list_of_lists, prog_num = result
         else:
             print("Invalid input")
-            continue
-
-    # int_sheet()
-    # stock_len = get_stock()
-    # cut_list = build_cutlist(stock_len)
-    # print(cut_list)
-
 
 if __name__ == "__main__":
     main()

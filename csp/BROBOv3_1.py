@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from stock_cutter_1d import solveCut
 from alns_stock_cutter import alnsSolver
+from brobo_preprocessor import buildBroboProgram
 #from ortools.sat.python import cp_model
 
 class CutOptimizerApp:
@@ -119,6 +120,8 @@ class CutOptimizerApp:
             for idx, stick in enumerate(solution, start=1):
                 usage = sum(stick) / (stock_length / scale_factor) * 100
                 print(f"Stick {idx}: {stick}, Usage: {usage:.2f}%")
+            buildBroboProgram(solution, blade_width, '4200', "C:/Users/dylan/Desktop/ColdSawCutListMaster")
+            
 
         except ValueError as e:
             print(f"Error: {e}")
