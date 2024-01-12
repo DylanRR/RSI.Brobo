@@ -97,12 +97,12 @@ class CutOptimizerApp:
         scale_factor = 100
         solver = "ALNS"
         stock_length = 100
-        blade_width = .25
+        blade_width = 1
         dead_zone = 5
-        cut_lengths = [40, 35, 15, 12, 6, 4]
-        cut_quantities = [4, 9, 6, 4, 8, 12]
+        cut_lengths = [5, 10, 15, 20]
+        cut_quantities = [1, 1, 1, 1]
         return stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor
-    
+        # inital Demand should be 5+10+15+20 = 50   1*3 = 3 50+3 = 53*1000 = ~53000~
 
     def optimize_cuts(self):
         try:
@@ -121,6 +121,7 @@ class CutOptimizerApp:
                 usage = sum(stick) / (stock_length / scale_factor) * 100
                 print(f"Stick {idx}: {stick}, Usage: {usage:.2f}%")
                 print(f"Blade Width: {blade_width}, Dead Zone: {dead_zone}")
+            blade_width = deScaleMeasurement(blade_width, scale_factor)
             buildBroboProgram(solution, blade_width, '4200', "C:/Users/dylan/Desktop/ColdSawCutListMaster")
             
 

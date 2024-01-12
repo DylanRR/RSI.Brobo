@@ -15,7 +15,7 @@ def buildBroboCutData(data, bladeKerf):
     demandData = []
     for stick in data:
         tempStick = []
-        print (f"stick: {stick}")
+        #print (f"stick: {stick}")
         stick = orderList(stick)
         tempStick.append(buildInitialAbsVal(stick, bladeKerf))
         stick = drop_first(stick)
