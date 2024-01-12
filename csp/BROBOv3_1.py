@@ -121,7 +121,8 @@ class CutOptimizerApp:
                 print(f"Stick {idx}: {stick}, Usage: {usage:.2f}%")
                 print(f"Blade Width: {blade_width}, Dead Zone: {dead_zone}")
             blade_width = deScaleMeasurement(blade_width, scale_factor)
-            buildBroboProgram(solution, blade_width, '4200', "C:/Users/dylan/Desktop/ColdSawCutListMaster")
+            #buildBroboProgram(solution, blade_width, '4200', "C:/Users/dylan/Desktop/ColdSawCutListMaster")
+            buildBroboProgram(solution, blade_width, '4200', "C:/Users/Mothershipv2/Desktop/cnc.brobo/RSI.Brobo")
             
 
         except ValueError as e:
