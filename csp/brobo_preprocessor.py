@@ -9,12 +9,12 @@ def buildBroboProgram(data, bladeKerf, jobNumber, savePath, programNum = 1, file
     The Excel files are saved in the specified save path with an optional file name.
 
     Args:
-        data (list of lists): The raw cut data, where each inner list represents a stick and contains measurements.
+        data (list -> lists -> float): The raw cut data, where each inner list represents a stick and contains measurements.
         bladeKerf (float): The width of the saw blade.
         jobNumber (int): The job number.
         savePath (str): The path where the Excel files will be saved.
         programNum (int, optional): The starting program number. Defaults to 1.
-        fileName (str, optional): The name of the Excel files. If None, a default name will be used.
+        fileName (str, optional): The name of the Excel files. If None, a name will be auto generated.
 
     Dependencies:
         buildXlsFile.py

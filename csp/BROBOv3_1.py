@@ -4,7 +4,6 @@ from tkinter import messagebox
 from stock_cutter_1d import solveCut
 from alns_stock_cutter import alnsSolver
 from brobo_preprocessor import buildBroboProgram
-#from ortools.sat.python import cp_model
 
 class CutOptimizerApp:
     def __init__(self, root):
