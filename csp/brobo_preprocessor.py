@@ -15,7 +15,8 @@ def buildBroboCutData(data, bladeKerf):
     demandData = [[]]
     for stick in data:
         tempStick = []
-        #stick = orderList(stick)                                                   #TODO: There is a Bug here, and needs to fix
+        print (f"stick: {stick}")
+        stick = orderList(stick)                                                   #TODO: There is a Bug here, and needs to fix
         tempStick.append(buildInitialAbsVal(stick, bladeKerf))
         stick = drop_first(stick)
         for measurment in stick:
@@ -41,7 +42,7 @@ def inchToDecimalInch(measurement):
     return float(measurement) * 1000
 
 def orderList(list):
-    return sorted(list, key=lambda x: x[0])
+    return sorted(list)
 
 def total_parts_length(list):
     return sum(list)
