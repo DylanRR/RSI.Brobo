@@ -12,11 +12,11 @@ def buildBroboProgram(data, bladeKerf, jobNumber, savePath, programNum = 1, file
 #Build Brobo Cut Data
 def buildBroboCutData(data, bladeKerf):
     data,bladeKerf = scaleData(data, bladeKerf)
-    demandData = [[]]
+    demandData = []
     for stick in data:
         tempStick = []
         print (f"stick: {stick}")
-        stick = orderList(stick)                                                   #TODO: There is a Bug here, and needs to fix
+        stick = orderList(stick)
         tempStick.append(buildInitialAbsVal(stick, bladeKerf))
         stick = drop_first(stick)
         for measurment in stick:

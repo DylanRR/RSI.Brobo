@@ -16,6 +16,7 @@ class buildXFile:
         self.worksheet = self.workbook.add_worksheet()
 
     def buildSheet(self):
+        print (f"XLS Stick: {self.stickData}")
         self._buildHeader()
         self._buildAuthor()
         self._buildProgramNumber()
@@ -36,6 +37,10 @@ class buildXFile:
         self.worksheet.write('E1', 'mode')
         self.worksheet.write('F1', 'output')
 
+    def _buildAuthor(self):
+        if self.author:
+            self.worksheet.write('G1', ';Program Author: ' + self.author)
+
     def _buildProgramNumber(self):
         self.worksheet.write('A2', 'Pno')
         self.worksheet.write('B2', self.programNumber)
@@ -53,6 +58,9 @@ class buildXFile:
             tempLineNum += 1
         self._buildFinalLine(tempLineNum)
 
+    def _saveFile(self):
+        self.workbook.close()
+
     def _buildFinalLine(self, lineNum):
         self.worksheet.write('A' + str(lineNum), 0)
         self.worksheet.write('B' + str(lineNum), lineNum)
@@ -60,10 +68,6 @@ class buildXFile:
         self.worksheet.write('D' + str(lineNum), 0)
         self.worksheet.write('E' + str(lineNum), 0)
         self.worksheet.write('F' + str(lineNum), 1)
-
-    def _buildAuthor(self):
-        if self.author:
-            self.worksheet.write('G1', ';Program Author: ' + self.author)
 
 
     def _checkValidSaveLocation(self):
@@ -103,6 +107,3 @@ class buildXFile:
                 break
             count += 1
         self.fileName = file_name
-        
-    def _saveFile(self):
-        self.workbook.close()
