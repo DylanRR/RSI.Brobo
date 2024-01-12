@@ -43,23 +43,23 @@ class buildXFile:
     def _buildCuts(self):
         tempLineNum = 3
         for measurement in self.stickData:
-            self.worksheet.write('A' + str(tempLineNum), '0')
+            self.worksheet.write('A' + str(tempLineNum), 0)
             self.worksheet.write('B' + str(tempLineNum), tempLineNum - 2)
             self.worksheet.write('C' + str(tempLineNum), measurement)
-            self.worksheet.write('D' + str(tempLineNum), '1')
-            modeVal = '0' if tempLineNum == 3 else '1'
+            self.worksheet.write('D' + str(tempLineNum), 1)
+            modeVal = 0 if tempLineNum == 3 else 1
             self.worksheet.write('E' + str(tempLineNum), modeVal)
-            self.worksheet.write('F' + str(tempLineNum), '1')
+            self.worksheet.write('F' + str(tempLineNum), 1)
             tempLineNum += 1
         self._buildFinalLine(tempLineNum)
 
     def _buildFinalLine(self, lineNum):
-        self.worksheet.write('A' + str(lineNum), '0')
+        self.worksheet.write('A' + str(lineNum), 0)
         self.worksheet.write('B' + str(lineNum), lineNum)
-        self.worksheet.write('C' + str(lineNum), '0')
-        self.worksheet.write('D' + str(lineNum), '0')
-        self.worksheet.write('E' + str(lineNum), '0')
-        self.worksheet.write('F' + str(lineNum), '1')
+        self.worksheet.write('C' + str(lineNum), 0)
+        self.worksheet.write('D' + str(lineNum), 0)
+        self.worksheet.write('E' + str(lineNum), 0)
+        self.worksheet.write('F' + str(lineNum), 1)
 
     def _buildAuthor(self):
         if self.author:
