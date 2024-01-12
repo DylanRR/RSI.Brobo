@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from stock_cutter_1d import solveCut
 from alns_stock_cutter import alnsSolver
+from brobo_preprocessor import buildBroboProgram
 #from ortools.sat.python import cp_model
 
 class CutOptimizerApp:
@@ -84,7 +85,7 @@ class CutOptimizerApp:
     
     def get_inputs(self):
         scale_factor = 100
-        solver = "OR-Tools"
+        solver = "ALNS"
         stock_length = self.stock_length.get()
         blade_width = self.blade_width.get()
         dead_zone = self.dead_zone.get()
@@ -105,8 +106,8 @@ class CutOptimizerApp:
 
     def optimize_cuts(self):
         try:
-            #stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor = self.get_inputs()
-            stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor = self.uTest()
+            stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor = self.get_inputs()
+            #stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor = self.uTest()
             stock_length, blade_width, dead_zone, cut_lengths, zipped_data = solverPreProcess(stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, scale_factor)
             # Call the new solver here
             if solver == "OR-Tools":
@@ -119,6 +120,9 @@ class CutOptimizerApp:
             for idx, stick in enumerate(solution, start=1):
                 usage = sum(stick) / (stock_length / scale_factor) * 100
                 print(f"Stick {idx}: {stick}, Usage: {usage:.2f}%")
+                print(f"Blade Width: {blade_width}, Dead Zone: {dead_zone}")
+            buildBroboProgram(solution, blade_width, '4200', "C:/Users/dylan/Desktop/ColdSawCutListMaster")
+            
 
         except ValueError as e:
             print(f"Error: {e}")
