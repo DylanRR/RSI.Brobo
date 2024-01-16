@@ -1,6 +1,17 @@
 from buildXlsFile import buildXFile
+from solver_handler import CuttingParameters
+def buildBroboProgram(cutParams):
+    solution = cutParams.getSolution()
+    bladeKerf = cutParams.getBladeWidth()
+    jobNumber = cutParams.getJobNumber()
+    savePath = cutParams.getDirPath()
+    programNum = 1
+    fileName = None
 
-def buildBroboProgram(data, bladeKerf, jobNumber, savePath, programNum = 1, fileName = None):
+    #######################################################################
+    #TODO: We are rebuilding this function to use a passed in CuttingParameters object so that we can have more control over what is passed to the xls file builder.
+    #######################################################################
+
     """
     Builds a Brobo program by processing the raw cut data and creating an Excel file for each stick.
 

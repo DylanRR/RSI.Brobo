@@ -4,19 +4,14 @@ import re
 
 class buildXFile:
     """
-    Class for building an Excel file with specific data.
+    A class used to represent and interact with the Excel files.
 
-    Args:
-        stickData (list): List of measurements.
-        programNumber (int): Program number.
-        jobNumber (str): Job number.
-        dirPath (str): Directory path.
-        fileName (str, optional): File name. Defaults to None.
-
-    Usage:
-        xlsFile = buildXFile(stickData, programNumber, jobNumber, dirPath, fileName) #fileName is optional
-        xlsFile.setAuthor('NAME') # Optional
-        xlsFile.buildSheet()
+    :ivar list stickData: Individual stick data.
+    :ivar int programNumber: The program number.
+    :ivar int jobNum: The job number.
+    :ivar str savePath: The save path.
+    :ivar str fileName: (Optional) The file name.
+    :ivar str author: The author of the solution.
     """
     def __init__(self, stickData, programNumber,  jobNumber, dirPath,  fileName = None):
         self.stickData = stickData
@@ -30,13 +25,8 @@ class buildXFile:
         self.worksheet = self.workbook.add_worksheet()
 
     def buildSheet(self):
-        """
-        Builds the sheet by calling various methods to construct the header, author, program number, and cuts.
-        Finally, it saves the file.
-        
-        Args:
-            self: The current instance of the class.
-        """
+        """Used to build and save the Excel file.
+        """        
         self._buildHeader()
         self._buildAuthor()
         self._buildProgramNumber()
@@ -44,13 +34,11 @@ class buildXFile:
         self._saveFile()
 
     def setAuthor(self, author):
-        """
-        Set the author of the file.
+        """Used to set the author of the solution.
 
-        Args:
-            self: The current instance of the class.
-            author (str): The name of the author.
-        """
+        :param author: Author Name
+        :type author: String
+        """        
         self.author = author
 
     ############ Private Methods ############
@@ -170,9 +158,9 @@ class buildXFile:
         Args:
             self: The current instance of the class.
         """
-        if not os.path.exists(self.savePath + '/' + self.jobNum):
-            os.makedirs(self.savePath + '/' + self.jobNum)
-        self.savePath = self.savePath + '/' + self.jobNum + '/'
+        if not os.path.exists(self.savePath + '/' + str(self.jobNum)):
+            os.makedirs(self.savePath + '/' + str(self.jobNum))
+        self.savePath = self.savePath + '/' + str(self.jobNum) + '/'
     
     def _processFileName(self):
         """

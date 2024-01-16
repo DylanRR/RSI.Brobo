@@ -1,6 +1,7 @@
 from stock_cutter_1d import solveCut
 from alns_stock_cutter import alnsSolver
 from brobo_preprocessor import buildBroboProgram
+from buildXlsFile import buildXFile
 from tkinter import messagebox
 
 #TODO: Add a hybrid solver that uses ALNS to generate a good initial solution and then uses OR-Tools to optimize it.
@@ -26,13 +27,44 @@ class CuttingParameters:
         self.dead_zone = dead_zone
         self.cut_lengths = cut_lengths
         self.cut_quantities = cut_quantities
-        self.scale_factor = 100
-        self.jobNumber = 0000
-        self.dirPath = "U:/Git Development/rsi.Brobo"
-        self.solver = "ALNS"
+        self.scale_factor = None
+        self.jobNumber = None
+        self.dirPath = None
+        self.solver = None
         self.author = None
         self.debug = False
         self.solution = None
+
+    def getStockLength(self):
+        """Get the stock length for the cuttingParameters object.
+
+        :return: Stock Length
+        :rtype: int
+        """        
+        return self.stock_length
+
+    def getBladeWidth(self):
+        """Get the blade width for the cuttingParameters object.
+
+        :return: Blade Width
+        :rtype: int
+        """        
+        return self.blade_width
+    
+    def getScaleFactor(self):
+        """Get the scale factor for the cuttingParameters object.
+
+        :return: Scale Factor
+        :rtype: int
+        """        
+        return self.scale_factor
+    
+    def setScaleFactor(self, scale_factor):
+        """Set the scale factor for the cuttingParameters object.
+
+        :param int scale_factor: Scale Factor
+        """        
+        self.scale_factor = scale_factor
 
     def getJobNumber(self):
         """Get the job number for the cuttingParameters object.
@@ -115,7 +147,7 @@ class CuttingParameters:
         :raises ValueError: If invalid numeric values are entered.
         """        
         try:
-            stock_length, blade_width, zipped_data = _solverPreProcess(self.stock_length, self.blade_width, self.dead_zone, self.cut_lengths, self.cut_quantities, self.scale_factor)
+            stock_length, zipped_data, blade_width = self._solverPreProcess()
             if self.solver == "OR-Tools":
                 solution = _solveORTools(zipped_data, stock_length)
                 solution = _ortoolsPostProcessor(solution, blade_width, self.scale_factor)
@@ -152,15 +184,13 @@ class CuttingParameters:
             print(f"Stick {idx}: {stick}, Usage: {usage:.2f}%")
             print(f"Blade Width: {self.blade_width}, Dead Zone: {self.dead_zone}")
 
-def _solverPreProcess(stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, scale_factor):
-    stock_length = _scaleMeasurement(stock_length, scale_factor)
-    blade_width = _scaleMeasurement(blade_width, scale_factor)
-    dead_zone = _scaleMeasurement(dead_zone, scale_factor)
-    stock_length = stock_length - dead_zone
-    cut_lengths = [_scaleMeasurement(cut_length, scale_factor) for cut_length in cut_lengths]
-    zipped_data = _zipCutData(cut_lengths, cut_quantities)
-    zipped_data = _addBladeKerf(zipped_data, blade_width)
-    return stock_length, blade_width, dead_zone, cut_lengths, zipped_data
+    def _solverPreProcess(self):
+        stock_length = _scaleMeasurement(self.stock_length, self.scale_factor)
+        blade_width = _scaleMeasurement(self.blade_width, self.scale_factor)
+        cut_lengths = [_scaleMeasurement(length, self.scale_factor) for length in self.cut_lengths]
+        zipped_data = _zipCutData(cut_lengths, self.cut_quantities)
+        zipped_data = _addBladeKerf(zipped_data, blade_width)
+        return stock_length, zipped_data, blade_width
 
 def _solveORTools(zipped_data, stock_length):
     zipped_data = [[quantity, length] for length, quantity in zipped_data]
