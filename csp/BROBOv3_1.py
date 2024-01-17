@@ -34,7 +34,7 @@ class CutOptimizerApp:
         self.add_cut_button.pack()
         self.add_cut_button.config(state="disabled")  # Disable the button initially
 
-        self.optimize_button = tk.Button(self.root, text="Optimize Cuts", command=self.optimize)
+        self.optimize_button = tk.Button(self.root, text="Optimize Cuts", command=self.UtestOptimize)
         self.optimize_button.pack()
 
         self.cut_canvas = tk.Canvas(self.root)
@@ -126,27 +126,25 @@ class CutOptimizerApp:
         blade_width = 1
         dead_zone = 5
         cut_lengths = [5, 10, 15, 20]
-        cut_quantities = [1, 1, 1, 1]
+        cut_quantities = [1, 1, 1, 6]
         return stock_length, blade_width, dead_zone, cut_lengths, cut_quantities
         # inital Demand should be ~53000~
 
     def UtestOptimize(self):
         stock_length, blade_width, dead_zone, cut_lengths, cut_quantities = self.uTest()
-        print (stock_length, blade_width, dead_zone, cut_lengths, cut_quantities)
+        print(f"Stock Length: {stock_length}\nBlade Width: {blade_width}\nDead Zone: {dead_zone}\nCut Lengths: {cut_lengths}\nCut Quantities: {cut_quantities}")
         newCut = CuttingParameters(stock_length, blade_width, dead_zone, cut_lengths, cut_quantities)
         newCut.setSolver('ALNS')
         newCut.setScaleFactor(100)
         newCut.setJobNumber(1212)
         newCut.setDirPath("U:/Git Development/rsi.Brobo")
+        newCut.setAuthor("Dylan")
+        newCut.setStaringProgramNumber(4)
+        newCut.setFileName("test")
         newCut.setDebug(True)
-        print("BREAKPOINT 0")
         newCut.buildSolution()
-        print("BREAKPOINT 1")
-        
-        solution = newCut.getSolution()
         newCut.print_solution()
-        print (solution)
-        buildBroboProgram(solution, blade_width, newCut.getJobNumber(), newCut.getDirPath())
+        buildBroboProgram(newCut)
 
     def optimize(self):
         newCut = CuttingParameters(self.getStockLength(), self.getBladeWidth(), self.getDeadZone(), self.getCutLengths(), self.getCutQuantities())
@@ -159,7 +157,7 @@ class CutOptimizerApp:
         newCut.buildSolution()
         solution = newCut.getSolution()
         print (solution)
-        buildBroboProgram(solution, newCut.getBladeWidth(), newCut.getJobNumber(), newCut.getDirPath())
+        #buildBroboProgram(solution, newCut.getBladeWidth(), newCut.getJobNumber(), newCut.getDirPath())
 
 if __name__ == "__main__":
     root = tk.Tk()

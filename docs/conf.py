@@ -20,7 +20,7 @@ release = '1.0'
 
 extensions = ['sphinx.ext.autodoc']
 
-autodoc_mock_imports = ["stock_cutter_1d", "alns_stock_cutter", "brobo_preprocessor"]
+autodoc_mock_imports = ["stock_cutter_1d", "alns_stock_cutter", "brobo_preprocessor", "build_xlsx_file", "solver_handler"]
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 

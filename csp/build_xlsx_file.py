@@ -4,7 +4,7 @@ import re
 
 class buildXFile:
     """
-    A class used to represent and interact with the Excel files.
+    A class used to build xls files in a format that a BROBO Semi-Automatic cold saw can interpret.
 
     :ivar list stickData: Individual stick data.
     :ivar int programNumber: The program number.
@@ -12,6 +12,11 @@ class buildXFile:
     :ivar str savePath: The save path.
     :ivar str fileName: (Optional) The file name.
     :ivar str author: The author of the solution.
+
+    Dependencies:
+        - xlsxwriter
+        - os
+        - re
     """
     def __init__(self, stickData, programNumber,  jobNumber, dirPath,  fileName = None):
         self.stickData = stickData
@@ -25,8 +30,8 @@ class buildXFile:
         self.worksheet = self.workbook.add_worksheet()
 
     def buildSheet(self):
-        """Used to build and save the Excel file.
-        """        
+        """This method fully builds the Excel file.
+        """                
         self._buildHeader()
         self._buildAuthor()
         self._buildProgramNumber()
@@ -127,9 +132,8 @@ class buildXFile:
 
         This method first builds the job number path using the `_buildJobNumPath` method.
         If the `fileName` attribute is empty, it automatically generates a file name using the `_autoGenerateFileName` method.
-        Otherwise, it processes the file name using the `_processFileName` method and checks if it contains any invalid characters.
-        If invalid characters are found, it prints a message and automatically generates a new file name.
-        Finally, it checks if a file with the same name already exists in the save path. If it does, it prints a message and generates a new file name.
+        Otherwise, it processes the file name using the `_processFileName` method.
+        Finally, it checks if a file with the same name already exists in the save path. If it does, it generates a new file name.
 
         Args:
             self: The current instance of the class.
@@ -140,13 +144,9 @@ class buildXFile:
             self._autoGenerateFileName()
         else:
             self._processFileName()
-            if re.search(r'[\\/*?:"<>|]', self.fileName):
-                print("Invalid characters in file name.")
+            if os.path.exists(self.savePath + self.fileName):   #Only gets triggered in rare cases due to the _processFileName method doing initial checks (May be removed in the future)
+                print("File already exists.")
                 self._autoGenerateFileName()
-            else:
-                if os.path.exists(self.savePath + self.fileName):
-                    print("File already exists.")
-                    self._autoGenerateFileName()
             
     def _buildJobNumPath(self):
         """
@@ -164,14 +164,34 @@ class buildXFile:
     
     def _processFileName(self):
         """
-        Process the file name by appending '.xlsx' if it doesn't already end with it.
+        Process the file name by first checking if the name contains invalid characters. If it does it will automatically generate a new file name.
+        If the file name does not start with three digits, it will automatically add a three digit number to the beginning of the file name.
+        If the file name does not end with '.xlsx', it will automatically add '.xlsx' to the end of the file name.
 
         Args:
             self: The current instance of the class.
         """
+        if re.search(r'[\\/*?:"<>|]', self.fileName):
+                print("Invalid characters in file name.")
+                self._autoGenerateFileName()
+                return
+        
+        if not re.match(r'^\d{3}', self.fileName):
+            print("Filename does not start with three digits.")
+            files = [f for f in os.listdir(self.savePath) if f.endswith('.xlsx')]
+
+            while True:
+                count = len(files) + 1
+                count_str = str(count).zfill(3)
+                fileName = count_str + '-' + self.fileName
+                if not os.path.exists(self.savePath + fileName):
+                    break
+                count += 1
+            self.fileName = fileName
+
         if not self.fileName.lower().endswith('.xlsx'):
             self.fileName += '.xlsx'
-        
+
     def _autoGenerateFileName(self):
         """
         Auto-generates a unique file name for the Excel file based on the program number and the number of stick data parts.
@@ -180,8 +200,18 @@ class buildXFile:
             self: The current instance of the class.
         """
         print("Auto Generating File Name........................")
+        
+        count = 0
+        highest_number = 0
         files = [f for f in os.listdir(self.savePath) if f.endswith('.xlsx')]
-        count = len(files) + 1
+        for file in files:
+            match = re.match(r'^(\d{3})', file)
+            if match:
+                number = int(match.group(1))
+                if number > highest_number:
+                    highest_number = number
+
+        count = highest_number + 1 if highest_number > len(files) else len(files) + 1
 
         while True:
             count_str = str(count).zfill(3)

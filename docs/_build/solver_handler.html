@@ -21,6 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Brobo Pre-Processor Module" href="brobo_preprocessor.html" />
     <link rel="prev" title="Welcome to rsi.brobo’s documentation!" href="index.html" /> 
 </head>
 
@@ -48,23 +49,32 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Solver Handler Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#csp.solver_handler.CuttingParameters"><code class="docutils literal notranslate"><span class="pre">CuttingParameters</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.buildSolution"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.buildSolution()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.buildXls"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.buildXls()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getAuthor"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getAuthor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getBladeWidth"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getBladeWidth()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getDebug"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getDebug()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getDirPath"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getDirPath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getFileName"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getFileName()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getJobNumber"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getJobNumber()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getScaleFactor"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getScaleFactor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getSolution"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getSolution()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getSolver"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getSolver()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getStaringProgramNumber"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getStaringProgramNumber()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.getStockLength"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.getStockLength()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.print_solution"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.print_solution()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setAuthor"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setAuthor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setDebug"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setDebug()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setDirPath"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setDirPath()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setFileName"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setFileName()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setJobNumber"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setJobNumber()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setScaleFactor"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setScaleFactor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setSolver"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setSolver()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#csp.solver_handler.CuttingParameters.setStaringProgramNumber"><code class="docutils literal notranslate"><span class="pre">CuttingParameters.setStaringProgramNumber()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="brobo_preprocessor.html">Brobo Pre-Processor Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_xlsx_file.html">XLSX Builder Module</a></li>
 </ul>
 
         </div>
@@ -110,8 +120,18 @@
 <li><p><strong>dirPath</strong> (<em>str</em>) – The directory path.</p></li>
 <li><p><strong>solver</strong> (<em>str</em>) – The solver type.</p></li>
 <li><p><strong>author</strong> (<em>str</em>) – The author of the solution.</p></li>
+<li><p><strong>staringProgramNumber</strong> (<em>int</em>) – The starting program number.</p></li>
+<li><p><strong>fileName</strong> (<em>str</em>) – The name of the Excel files.</p></li>
 <li><p><strong>debug</strong> (<em>bool</em>) – The debug status.</p></li>
 <li><p><strong>solution</strong> (<em>list</em><em> of </em><em>list</em><em> of </em><em>int</em><em> or </em><em>float</em>) – The solution to the stick packing problem.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Dependencies:</dt><dd><ul class="simple">
+<li><p>solveCut from stock_cutter_1d module</p></li>
+<li><p>alnsSolver from alns_stock_cutter module</p></li>
+<li><p>messagebox from tkinter module</p></li>
 </ul>
 </dd>
 </dl>
@@ -127,12 +147,6 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.buildXls">
-<span class="sig-name descname"><span class="pre">buildXls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.buildXls" title="Link to this definition"></a></dt>
-<dd><p>Builds the XLS files using the provided solution, blade width, job number, and directory path.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getAuthor">
 <span class="sig-name descname"><span class="pre">getAuthor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getAuthor" title="Link to this definition"></a></dt>
 <dd><p>Get the author of the cuttingParameters object.</p>
@@ -142,6 +156,20 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getBladeWidth">
+<span class="sig-name descname"><span class="pre">getBladeWidth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getBladeWidth" title="Link to this definition"></a></dt>
+<dd><p>Get the blade width for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Blade Width</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -175,12 +203,40 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getFileName">
+<span class="sig-name descname"><span class="pre">getFileName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getFileName" title="Link to this definition"></a></dt>
+<dd><p>Get the file name for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>File Name</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getJobNumber">
 <span class="sig-name descname"><span class="pre">getJobNumber</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getJobNumber" title="Link to this definition"></a></dt>
 <dd><p>Get the job number for the cuttingParameters object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Job Number</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getScaleFactor">
+<span class="sig-name descname"><span class="pre">getScaleFactor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getScaleFactor" title="Link to this definition"></a></dt>
+<dd><p>Get the scale factor for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Scale Factor</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
@@ -212,6 +268,34 @@
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getStaringProgramNumber">
+<span class="sig-name descname"><span class="pre">getStaringProgramNumber</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getStaringProgramNumber" title="Link to this definition"></a></dt>
+<dd><p>Get the starting program number for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Starting Program Number if set, else 1</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.getStockLength">
+<span class="sig-name descname"><span class="pre">getStockLength</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.getStockLength" title="Link to this definition"></a></dt>
+<dd><p>Get the stock length for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Stock Length</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -263,12 +347,34 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.setFileName">
+<span class="sig-name descname"><span class="pre">setFileName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.setFileName" title="Link to this definition"></a></dt>
+<dd><p>Set the file name for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fileName</strong> (<em>string</em>) – File Name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.setJobNumber">
 <span class="sig-name descname"><span class="pre">setJobNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobNumber</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.setJobNumber" title="Link to this definition"></a></dt>
 <dd><p>Set the job number for the cuttingParameters object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>jobNumber</strong> (<em>int</em>) – Job Number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.setScaleFactor">
+<span class="sig-name descname"><span class="pre">setScaleFactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.setScaleFactor" title="Link to this definition"></a></dt>
+<dd><p>Set the scale factor for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale_factor</strong> (<em>int</em>) – Scale Factor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -284,6 +390,17 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="csp.solver_handler.CuttingParameters.setStaringProgramNumber">
+<span class="sig-name descname"><span class="pre">setStaringProgramNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startingProgramNumber</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csp.solver_handler.CuttingParameters.setStaringProgramNumber" title="Link to this definition"></a></dt>
+<dd><p>Set the starting program number for the cuttingParameters object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>startingProgramNumber</strong> (<em>int</em>) – Starting Program Number</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -293,6 +410,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to rsi.brobo’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="brobo_preprocessor.html" class="btn btn-neutral float-right" title="Brobo Pre-Processor Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

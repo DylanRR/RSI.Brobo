@@ -1,7 +1,5 @@
 from stock_cutter_1d import solveCut
 from alns_stock_cutter import alnsSolver
-from brobo_preprocessor import buildBroboProgram
-from buildXlsFile import buildXFile
 from tkinter import messagebox
 
 #TODO: Add a hybrid solver that uses ALNS to generate a good initial solution and then uses OR-Tools to optimize it.
@@ -18,8 +16,15 @@ class CuttingParameters:
     :ivar str dirPath: The directory path.
     :ivar str solver: The solver type.
     :ivar str author: The author of the solution.
+    :ivar int staringProgramNumber: The starting program number.
+    :ivar str fileName: The name of the Excel files.
     :ivar bool debug: The debug status.
     :ivar list of list of int or float solution: The solution to the stick packing problem.
+
+    Dependencies:
+        - solveCut from stock_cutter_1d module
+        - alnsSolver from alns_stock_cutter module
+        - messagebox from tkinter module
     """    
     def __init__(self, stock_length, blade_width, dead_zone, cut_lengths, cut_quantities):
         self.stock_length = stock_length
@@ -32,8 +37,10 @@ class CuttingParameters:
         self.dirPath = None
         self.solver = None
         self.author = None
+        self.staringProgramNumber = None
         self.debug = False
         self.solution = None
+        self.fileName = None
 
     def getStockLength(self):
         """Get the stock length for the cuttingParameters object.
@@ -50,6 +57,38 @@ class CuttingParameters:
         :rtype: int
         """        
         return self.blade_width
+
+    def getStaringProgramNumber(self):
+        """Get the starting program number for the cuttingParameters object.
+
+        :return: Starting Program Number if set, else 1
+        :rtype: int
+        """
+        if self.staringProgramNumber == None:
+            return 1
+        return self.staringProgramNumber
+
+    def setStaringProgramNumber(self, startingProgramNumber):
+        """Set the starting program number for the cuttingParameters object.
+
+        :param int startingProgramNumber: Starting Program Number
+        """
+        self.staringProgramNumber = startingProgramNumber
+
+    def getFileName(self):
+        """Get the file name for the cuttingParameters object.
+
+        :return: File Name
+        :rtype: string
+        """        
+        return self.fileName
+    
+    def setFileName(self, fileName):
+        """Set the file name for the cuttingParameters object.
+
+        :param string fileName: File Name
+        """        
+        self.fileName = fileName
     
     def getScaleFactor(self):
         """Get the scale factor for the cuttingParameters object.
@@ -166,11 +205,6 @@ class CuttingParameters:
         :rtype: List of lists of floats
         """        
         return self.solution
-
-    def buildXls(self):
-        """Builds the XLS files using the provided solution, blade width, job number, and directory path.
-        """        
-        buildBroboProgram(self.solution, self.blade_width, self.jobNumber, self.dirPath)
 
     def print_solution(self):
         """Prints the solution of the stick packing problem.

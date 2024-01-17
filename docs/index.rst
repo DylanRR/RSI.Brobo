@@ -11,6 +11,8 @@ Welcome to rsi.brobo's documentation!
    :caption: Contents:
 
    solver_handler
+   brobo_preprocessor
+   build_xlsx_file
 
 Indices and tables
 ==================

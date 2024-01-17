@@ -44,6 +44,8 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="solver_handler.html">Solver Handler Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brobo_preprocessor.html">Brobo Pre-Processor Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_xlsx_file.html">XLSX Builder Module</a></li>
 </ul>
 
         </div>
@@ -84,11 +86,15 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.buildSolution">buildSolution() (csp.solver_handler.CuttingParameters method)</a>
+      <li><a href="brobo_preprocessor.html#csp.brobo_preprocessor.buildBroboProgram">buildBroboProgram() (in module csp.brobo_preprocessor)</a>
+</li>
+      <li><a href="build_xlsx_file.html#csp.build_xlsx_file.buildXFile.buildSheet">buildSheet() (csp.build_xlsx_file.buildXFile method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.buildXls">buildXls() (csp.solver_handler.CuttingParameters method)</a>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.buildSolution">buildSolution() (csp.solver_handler.CuttingParameters method)</a>
+</li>
+      <li><a href="build_xlsx_file.html#csp.build_xlsx_file.buildXFile">buildXFile (class in csp.build_xlsx_file)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -97,14 +103,28 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
+    csp.brobo_preprocessor
+
+      <ul>
+        <li><a href="brobo_preprocessor.html#module-csp.brobo_preprocessor">module</a>
+</li>
+      </ul></li>
+      <li>
+    csp.build_xlsx_file
+
+      <ul>
+        <li><a href="build_xlsx_file.html#module-csp.build_xlsx_file">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     csp.solver_handler
 
       <ul>
         <li><a href="solver_handler.html#module-csp.solver_handler">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters">CuttingParameters (class in csp.solver_handler)</a>
 </li>
   </ul></td>
@@ -115,17 +135,27 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getAuthor">getAuthor() (csp.solver_handler.CuttingParameters method)</a>
 </li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getBladeWidth">getBladeWidth() (csp.solver_handler.CuttingParameters method)</a>
+</li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getDebug">getDebug() (csp.solver_handler.CuttingParameters method)</a>
 </li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getDirPath">getDirPath() (csp.solver_handler.CuttingParameters method)</a>
+</li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getFileName">getFileName() (csp.solver_handler.CuttingParameters method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getJobNumber">getJobNumber() (csp.solver_handler.CuttingParameters method)</a>
 </li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getScaleFactor">getScaleFactor() (csp.solver_handler.CuttingParameters method)</a>
+</li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getSolution">getSolution() (csp.solver_handler.CuttingParameters method)</a>
 </li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getSolver">getSolver() (csp.solver_handler.CuttingParameters method)</a>
+</li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getStaringProgramNumber">getStaringProgramNumber() (csp.solver_handler.CuttingParameters method)</a>
+</li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.getStockLength">getStockLength() (csp.solver_handler.CuttingParameters method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -137,6 +167,10 @@
     module
 
       <ul>
+        <li><a href="brobo_preprocessor.html#module-csp.brobo_preprocessor">csp.brobo_preprocessor</a>
+</li>
+        <li><a href="build_xlsx_file.html#module-csp.build_xlsx_file">csp.build_xlsx_file</a>
+</li>
         <li><a href="solver_handler.html#module-csp.solver_handler">csp.solver_handler</a>
 </li>
       </ul></li>
@@ -154,17 +188,27 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setAuthor">setAuthor() (csp.solver_handler.CuttingParameters method)</a>
+      <li><a href="build_xlsx_file.html#csp.build_xlsx_file.buildXFile.setAuthor">setAuthor() (csp.build_xlsx_file.buildXFile method)</a>
+
+      <ul>
+        <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setAuthor">(csp.solver_handler.CuttingParameters method)</a>
 </li>
+      </ul></li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setDebug">setDebug() (csp.solver_handler.CuttingParameters method)</a>
+</li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setDirPath">setDirPath() (csp.solver_handler.CuttingParameters method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setDirPath">setDirPath() (csp.solver_handler.CuttingParameters method)</a>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setFileName">setFileName() (csp.solver_handler.CuttingParameters method)</a>
 </li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setJobNumber">setJobNumber() (csp.solver_handler.CuttingParameters method)</a>
 </li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setScaleFactor">setScaleFactor() (csp.solver_handler.CuttingParameters method)</a>
+</li>
       <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setSolver">setSolver() (csp.solver_handler.CuttingParameters method)</a>
+</li>
+      <li><a href="solver_handler.html#csp.solver_handler.CuttingParameters.setStaringProgramNumber">setStaringProgramNumber() (csp.solver_handler.CuttingParameters method)</a>
 </li>
   </ul></td>
 </tr></table>
