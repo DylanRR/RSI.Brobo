@@ -1,0 +1,22 @@
+.. rsi.brobo documentation master file, created by
+   sphinx-quickstart on Tue Jan 16 11:32:43 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to rsi.brobo's documentation!
+=====================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   solver_handler
+   brobo_preprocessor
+   build_xlsx_file
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

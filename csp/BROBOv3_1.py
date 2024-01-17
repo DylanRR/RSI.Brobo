@@ -1,8 +1,6 @@
 from asyncio.windows_events import NULL
 import tkinter as tk
-from tkinter import messagebox
-from stock_cutter_1d import solveCut
-from alns_stock_cutter import alnsSolver
+from solver_handler import CuttingParameters
 from brobo_preprocessor import buildBroboProgram
 
 class CutOptimizerApp:
@@ -36,7 +34,7 @@ class CutOptimizerApp:
         self.add_cut_button.pack()
         self.add_cut_button.config(state="disabled")  # Disable the button initially
 
-        self.optimize_button = tk.Button(self.root, text="Optimize Cuts", command=self.optimize_cuts)
+        self.optimize_button = tk.Button(self.root, text="Optimize Cuts", command=self.UtestOptimize)
         self.optimize_button.pack()
 
         self.cut_canvas = tk.Canvas(self.root)
@@ -82,92 +80,84 @@ class CutOptimizerApp:
         self.cut_lengths.append(cut_length)
         self.cut_quantities.append(cut_quantity)
     
-    def get_inputs(self):
-        scale_factor = 100
-        solver = "ALNS"
-        stock_length = self.stock_length.get()
-        blade_width = self.blade_width.get()
-        dead_zone = self.dead_zone.get()
-        cut_lengths = [cut_length.get() for cut_length in self.cut_lengths]
-        cut_quantities = [int(cut_quantity.get()) for cut_quantity in self.cut_quantities]
-        return stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor
+    def getStockLength(self):
+        return self.stock_length.get()
+    
+    def getBladeWidth(self):
+        return self.blade_width.get()
+    
+    def getDeadZone(self):
+        return self.dead_zone.get()
+    
+    def getCutLengths(self):
+        return [cut_length.get() for cut_length in self.cut_lengths]
+    
+    def getCutQuantities(self):
+        return [int(cut_quantity.get()) for cut_quantity in self.cut_quantities]
+    
+    def getScaleFactor(self):
+        #TODO: return self.scale_factor.get()
+        return 100
+    
+    def getSolver(self):
+        #TODO: return self.solver.get()
+        return "ALNS"
+    
+    def getAuthor(self):
+        #TODO: return self.author.get()
+        return "Dylan"
+    
+    def getJobNumber(self):
+        #TODO: return self.jobNumber.get()
+        return 1212
+    
+    def getDirPath(self):
+        #TODO: return self.dirPath.get()
+        return "U:/Git Development/rsi.Brobo"
+
+    def getDebug(self):
+        #TODO: return self.debug.get()
+        return True
+    
+    
 
     def uTest(self):
-        scale_factor = 100
-        solver = "ALNS"
         stock_length = 100
         blade_width = 1
         dead_zone = 5
         cut_lengths = [5, 10, 15, 20]
-        cut_quantities = [1, 1, 1, 1]
-        return stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor
-        # inital Demand should be 5+10+15+20 = 50   1*3 = 3 50+3 = 53*1000 = ~53000~
+        cut_quantities = [1, 1, 1, 6]
+        return stock_length, blade_width, dead_zone, cut_lengths, cut_quantities
+        # inital Demand should be ~53000~
 
-    def optimize_cuts(self):
-        try:
-            #stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor = self.get_inputs()
-            stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, solver, scale_factor = self.uTest()
-            stock_length, blade_width, dead_zone, cut_lengths, zipped_data = solverPreProcess(stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, scale_factor)
-            # Call the new solver here
-            if solver == "OR-Tools":
-                solution = solveORTools(zipped_data, stock_length)
-                solution = ortoolsPostProcessor(solution, blade_width, scale_factor)
-            elif solver == "ALNS":
-                solution = solveALNS(zipped_data, stock_length)
-                solution = alnsPostProcessor(solution, blade_width, scale_factor)
-            # Print the solution
-            for idx, stick in enumerate(solution, start=1):
-                usage = sum(stick) / (stock_length / scale_factor) * 100
-                print(f"Stick {idx}: {stick}, Usage: {usage:.2f}%")
-                print(f"Blade Width: {blade_width}, Dead Zone: {dead_zone}")
-            blade_width = deScaleMeasurement(blade_width, scale_factor)
-            buildBroboProgram(solution, blade_width, '4200', "C:/Users/dylan/Desktop/ColdSawCutListMaster")
-            
+    def UtestOptimize(self):
+        stock_length, blade_width, dead_zone, cut_lengths, cut_quantities = self.uTest()
+        print(f"Stock Length: {stock_length}\nBlade Width: {blade_width}\nDead Zone: {dead_zone}\nCut Lengths: {cut_lengths}\nCut Quantities: {cut_quantities}")
+        newCut = CuttingParameters(stock_length, blade_width, dead_zone, cut_lengths, cut_quantities)
+        newCut.setSolver('ALNS')
+        newCut.setScaleFactor(100)
+        newCut.setJobNumber(1212)
+        newCut.setDirPath("U:/Git Development/rsi.Brobo")
+        newCut.setAuthor("Dylan")
+        newCut.setStaringProgramNumber(4)
+        newCut.setFileName("test")
+        newCut.setDebug(True)
+        newCut.buildSolution()
+        newCut.print_solution()
+        buildBroboProgram(newCut)
 
-        except ValueError as e:
-            print(f"Error: {e}")
-            messagebox.showerror("Error", "Please enter valid numeric values.")
-
-def solveORTools(zipped_data, stock_length):
-    zipped_data = [[quantity, length] for length, quantity in zipped_data]  # Adjust the format for OR-Tools
-    return solveCut(zipped_data, stock_length, output_json=False, large_model=True, greedy_model=False, iterAccuracy=500)
-
-def solveALNS(zipped_data, stock_length):
-    zipped_data = flattenCutData(zipped_data)
-    return alnsSolver(stock_length, zipped_data, iterations=1000, seed=1234)
-
-def solverPreProcess(stock_length, blade_width, dead_zone, cut_lengths, cut_quantities, scale_factor):
-    stock_length = scaleMeasurement(stock_length, scale_factor)  # Convert to integer after applying a scale factor
-    blade_width = scaleMeasurement(blade_width, scale_factor)    # Convert to integer after applying a scale factor
-    dead_zone = scaleMeasurement(dead_zone, scale_factor)        # Convert to integer after applying a scale factor
-    stock_length = stock_length - dead_zone
-    cut_lengths = [scaleMeasurement(cut_length, scale_factor) for cut_length in cut_lengths]
-    zipped_data = zipCutData(cut_lengths, cut_quantities)
-    zipped_data = addBladeKerf(zipped_data, blade_width)
-    return stock_length, blade_width, dead_zone, cut_lengths, zipped_data
-
-def ortoolsPostProcessor(solution, blade_width, scale_factor):
-    return [[(length - blade_width) / scale_factor for length in stick[1]] for stick in solution]
-
-def alnsPostProcessor(solution, blade_width, scale_factor):
-    return [[(length - blade_width) / scale_factor for length in assignments] for assignments in solution]
-
-def deScaleMeasurement(measurement, scaleFactor):
-    return int(float(measurement) / scaleFactor)
-
-def scaleMeasurement(measurement, scaleFactor):
-    return int(float(measurement) * scaleFactor)
-
-def zipCutData(cut_lengths, cut_quantities):
-    return sorted(zip(cut_lengths, cut_quantities), key=lambda pair: pair[0], reverse=True)
-
-def flattenCutData(cutData):   
-    return [length for (length, quantity) in cutData for _ in range(quantity)]
-
-def addBladeKerf(cutData, bladeKerf):
-    return [[length + bladeKerf, quantity] for length, quantity in cutData]
-
-
+    def optimize(self):
+        newCut = CuttingParameters(self.getStockLength(), self.getBladeWidth(), self.getDeadZone(), self.getCutLengths(), self.getCutQuantities())
+        newCut.setSolver(self.getSolver())
+        newCut.setScaleFactor(self.getScaleFactor())
+        newCut.setJobNumber(self.getJobNumber())
+        newCut.setDirPath(self.getDirPath())
+        newCut.setAuthor(self.getAuthor())
+        newCut.setDebug(self.getDebug())
+        newCut.buildSolution()
+        solution = newCut.getSolution()
+        print (solution)
+        #buildBroboProgram(solution, newCut.getBladeWidth(), newCut.getJobNumber(), newCut.getDirPath())
 
 if __name__ == "__main__":
     root = tk.Tk()

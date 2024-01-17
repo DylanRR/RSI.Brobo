@@ -1,6 +1,36 @@
-from buildXlsFile import buildXFile
+from build_xlsx_file import buildXFile
+from solver_handler import CuttingParameters
 
-def buildBroboProgram(data, bladeKerf, jobNumber, savePath, programNum = 1, fileName = None):
+def buildBroboProgram(cutParams):
+    """This function builds a Brobo program by processing the raw cut data solution and creating an Excel file for each stick.
+
+    :param cutParams: The cutting parameters object.
+    :type cutParams: CuttingParameters
+
+    Dependencies:
+        - CuttingParameters from solver_handler module
+        - buildXFile from buildXlsFile module
+    """    
+    solution = cutParams.getSolution()
+    bladeKerf = cutParams.getBladeWidth()
+    jobNumber = cutParams.getJobNumber()
+    fileName = cutParams.getFileName()
+    scaleFactor = cutParams.getScaleFactor()
+    author = cutParams.getAuthor()
+    dirPath = cutParams.getDirPath()
+    programNum = cutParams.getStaringProgramNumber()
+
+    broboSticksData = _buildBroboCutData(solution, bladeKerf)
+    for stickData in broboSticksData:
+        xlsFile = buildXFile(stickData, programNum, jobNumber, dirPath, fileName)
+        if author != None:
+            xlsFile.setAuthor(author)
+        xlsFile.buildSheet()
+        programNum += 1
+    #######################################################################
+    #TODO: We are rebuilding this function to use a passed in CuttingParameters object so that we can have more control over what is passed to the xls file builder.
+    #######################################################################
+
     """
     Builds a Brobo program by processing the raw cut data and creating an Excel file for each stick.
 
@@ -22,13 +52,6 @@ def buildBroboProgram(data, bladeKerf, jobNumber, savePath, programNum = 1, file
     Usage:
         buildBroboProgram(data, bladeKerf, jobNumber, savePath, programNum = 1, fileName = None)
     """
-    broboSticksData = _buildBroboCutData(data, bladeKerf)
-    tempProgramNum = programNum
-    for stickData in broboSticksData:
-        xlsFile = buildXFile(stickData, tempProgramNum, jobNumber, savePath, fileName)
-        xlsFile.buildSheet()
-        tempProgramNum += 1
-
 
 ############ Private Functions ############
         
