@@ -2,15 +2,10 @@
 Contributions:
             Original Author: Serge Kruk https://github.com/sgkruk/Apress-AI/blob/master/cutting_stock.py
             Updated V2: Emad Ehsan https://github.com/emadehsan/Apress-AI/blob/master/my-models/custom_cutting_stock.py
-            Updated V3: Dylan Ragaishis https://github.com/DylanRR (Full documentation, addition of solveCut(), greedySolver(), and variable renaming for consistancy)
+            Updated V3: Dylan Ragaishis https://github.com/DylanRR
 '''
 from ortools.linear_solver import pywraplp
 from math import ceil
-from random import randint
-import json
-from read_lengths import get_data
-import typer
-from typing import Optional
 
 
 """
@@ -58,25 +53,6 @@ def SolVal(x):
     """
 def ObjVal(x):
   return x.Objective().Value()
-
-
-
-"""
-    Generates random data for a given number of orders.
-
-    Args:
-        num_orders (int): The number of orders to generate data for.
-
-    Returns:
-        List[List[int, int]]: A list of lists where each inner list contains
-        quantity and width of a stick.
-"""
-def gen_data(num_orders):
-    R=[]
-    for i in range(num_orders):
-        R.append([randint(1,12), randint(5,40)])
-    return R
-
 
 
 """
@@ -400,23 +376,6 @@ def checkWidths(demands, parent_width):
         Tuple[List[int], List[Tuple[int, int]]] or None: A tuple containing the list of cut lengths on the working stick
         and the updated list of sorted cut pairs. If a solution is not possible, returns None.
 """
-def greedySolver(sorted_pairs, working_length, working_stick, blade_width):
-    if working_length < 0:
-        return None, sorted_pairs
-    
-    tempWorking_stick = working_stick.copy()
-    tempWorking_length = working_length
-    tempSorted_pairs = sorted_pairs.copy()
-    
-    for i, (cut_length, cut_quantity) in enumerate(tempSorted_pairs):
-        if cut_quantity > 0 and cut_length <= tempWorking_length - blade_width:
-            tempWorking_stick.append(cut_length)
-            tempSorted_pairs[i] = (cut_length, cut_quantity - 1)
-            tempWorking_length -= (cut_length + blade_width)
-            new_tempWorking_stick, new_tempSorted_pairs = greedySolver(tempSorted_pairs, tempWorking_length, tempWorking_stick, blade_width)
-            if new_tempWorking_stick is not None:
-                return new_tempWorking_stick, new_tempSorted_pairs
-    return tempWorking_stick, tempSorted_pairs
 
 
 """
@@ -434,20 +393,6 @@ def greedySolver(sorted_pairs, working_length, working_stick, blade_width):
         List or str: Depending on the value of output_json, either a list of consumed sticks or a JSON string.
     """
 def solveCut(cutData, stock_length, output_json=False, large_model=True, greedy_model=False, iterAccuracy=20):
-    """
-    if greedy_model:
-        optimized_sticks = []
-        sorted_pairs = cut_list.copy()
-        while any(quantity > 0 for length, quantity in sorted_pairs):
-            tempWorking_stick = []
-            tempSorted_pairs = sorted_pairs.copy()
-            tempStick, newtempSorted_pairs = greedySolver(tempSorted_pairs, mtrl_length, tempWorking_stick, blade_width)
-            if tempStick is not None:
-                optimized_sticks.append(tempStick)
-                sorted_pairs = newtempSorted_pairs
-        solved = optimized_sticks
-    else:
-    """
     stock_length = [[1, stock_length]]
     solved = StockCutter1D(cutData, stock_length, output_json, large_model, iterAccuracy=iterAccuracy)
     return solved
@@ -538,99 +483,3 @@ def StockCutter1D(child_sticks, parent_sticks, output_json=True, large_model=Tru
     return json.dumps(output)        
   else:
     return consumed_big_sticks
-
-
-
-"""
-    Draws a graphical representation of the cut sticks.
-
-    This function generates a visual representation of the cut sticks using matplotlib. Each big stick
-    is shown as a horizontal colored line, with each color representing a small stick that is cut from it.
-    If a big stick has unused width, it is shown as a black-colored segment at the end.
-
-    Args:
-        consumed_big_sticks (List[List]): List of consumed big sticks, where each entry is a list containing
-                                        leftover width and a list of small sticks cut from it.
-        child_sticks (List[List[int]]): List of child stick quantities and widths.
-        parent_width (int): Width of the parent stick.
-
-    Note:
-        - The function uses matplotlib to draw the graph.
-        - The color of each small stick is determined based on its width.
-        - The height of each big stick on the graph is fixed at 8 units.
-        - There will be a margin of 2 units between successive big sticks.
-"""
-def drawGraph(consumed_big_sticks, child_sticks, parent_width):
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
-
-    xSize = parent_width
-    ySize = 10 * len(consumed_big_sticks)
-
-    fig,ax = plt.subplots(1)
-    plt.xlim(0, xSize)
-    plt.ylim(0, ySize)
-    plt.gca().set_aspect('equal', adjustable='box')
-    
-    coords = []
-    colors = ['r', 'g', 'b', 'y', 'brown', 'violet', 'pink', 'gray', 'orange', 'b', 'y']
-    colorDict = {}
-    i = 0
-    for quantity, width in child_sticks:
-      colorDict[width] = colors[i % 11]
-      i+= 1
-
-    y1 = 0
-    for i, big_stick in enumerate(consumed_big_sticks):
-      unused_width = big_stick[0]
-      small_sticks = big_stick[1]
-
-      x1 = 0
-      x2 = 0
-      y2 = y1 + 8
-      for j, small_stick in enumerate(small_sticks):
-        x2 = x2 + small_stick
-        print(f"{x1}, {y1} -> {x2}, {y2}")
-        width = abs(x1-x2)
-        height = abs(y1-y2)
-        rect_shape = patches.Rectangle((x1,y1), width, height, facecolor=colorDict[small_stick], label=f'{small_stick}')
-        ax.add_patch(rect_shape)
-        x1 = x2
-
-      if unused_width > 0:
-        width = unused_width
-        rect_shape = patches.Rectangle((x1,y1), width, height, facecolor='black', label='Unused')
-        ax.add_patch(rect_shape)
-
-      y1 += 10
-    plt.show()
-
-
-
-# Create a Typer application for the command-line interface (CLI).
-if __name__ == '__main__':
-  app = typer.Typer()
-
-  # Define the main function to be executed when the script is run.
-  def main(infile_name: Optional[str] = typer.Argument(None)):
-     # Check if an input file name is provided.
-    if infile_name:
-      child_sticks = get_data(infile_name)
-    else:
-      child_sticks = gen_data(3)
-    parent_sticks = [[10, 120]] # Parent stick data
-
-    # Run the StockCutter1D function to get consumed big sticks.
-    consumed_big_sticks = StockCutter1D(child_sticks, parent_sticks, output_json=False, large_model=False)
-    typer.echo(f"{consumed_big_sticks}")
-
-    # Print information about the consumed big sticks.
-    for idx, stick in enumerate(consumed_big_sticks):
-      typer.echo(f"Stick #{idx}:{stick}")
-
-    # Draw a graph to visualize the consumed big sticks.
-    drawGraph(consumed_big_sticks, child_sticks, parent_width=parent_sticks[0][1])
-
-# Run the main function using Typer.
-if __name__ == "__main__":
-  typer.run(main)
