@@ -122,7 +122,7 @@ class CutOptimizerApp:
     
 
     def uTest(self):
-        stock_length = 50
+        stock_length = 100
         blade_width = 1
         dead_zone = 5
         cut_lengths = [5, 10, 15, 20]

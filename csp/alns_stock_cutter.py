@@ -10,7 +10,7 @@ from alns.accept import HillClimbing
 from alns.select import RouletteWheel
 from alns.stop import MaxIterations
 
-BEAM_LENGTH = 9500  #TODO: make this a parameter It is not being set correctly
+#BEAM_LENGTH = 9500  #TODO: make this a parameter It is not being set correctly
 class CspState:
     """
     Solution state for the CSP problem. It has two data members, assignments
@@ -64,6 +64,7 @@ def wastage(assignment):
     """
     Helper method that computes the wastage on a given beam assignment.
     """
+    print (BEAM_LENGTH)
     return BEAM_LENGTH - sum(assignment)
 
 
@@ -145,6 +146,7 @@ def minimal_wastage(state, random_state):
     return state
 
 def alnsSolver(stock_length, cutData, iterations=100, seed=1234):
+    global BEAM_LENGTH
     BEAM_LENGTH = stock_length
     BEAMS = cutData # must be a flattened list 
     # Define the initial state of the problem

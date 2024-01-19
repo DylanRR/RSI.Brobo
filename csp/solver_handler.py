@@ -219,7 +219,7 @@ class CuttingParameters:
             print(f"Blade Width: {self.blade_width}, Dead Zone: {self.dead_zone}")
 
     def _solverPreProcess(self):
-        stock_length = _scaleMeasurement(self.stock_length, self.scale_factor)
+        stock_length = _scaleMeasurement(self.stock_length - self.dead_zone, self.scale_factor)
         blade_width = _scaleMeasurement(self.blade_width, self.scale_factor)
         cut_lengths = [_scaleMeasurement(length, self.scale_factor) for length in self.cut_lengths]
         zipped_data = _zipCutData(cut_lengths, self.cut_quantities)
