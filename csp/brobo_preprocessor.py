@@ -1,5 +1,6 @@
-from build_xlsx_file import buildXFile
-from solver_handler import CuttingParameters
+#from build_xlsx_file import buildXFile
+from build_xls_file import buildXFile
+# from solver_handler import CuttingParameters # Python's dynamic typing allows you to interact with an object without knowing its class.
 
 def buildBroboProgram(cutParams):
     """This function builds a Brobo program by processing the raw cut data solution and creating an Excel file for each stick.
@@ -21,6 +22,7 @@ def buildBroboProgram(cutParams):
     programNum = cutParams.getStaringProgramNumber()
 
     broboSticksData = _buildBroboCutData(solution, bladeKerf)
+
     for stickData in broboSticksData:
         xlsFile = buildXFile(stickData, programNum, jobNumber, dirPath, fileName)
         if author != None:

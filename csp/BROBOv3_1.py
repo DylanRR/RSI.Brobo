@@ -1,7 +1,12 @@
-from asyncio.windows_events import NULL
 import tkinter as tk
+import os
 from solver_handler import CuttingParameters
 from brobo_preprocessor import buildBroboProgram
+
+if os.name == 'nt':  # nt stands for Windows
+    from asyncio.windows_events import NULL
+else:
+    NULL = None  # or any equivalent on non-Windows platforms
 
 class CutOptimizerApp:
     def __init__(self, root):
@@ -140,7 +145,7 @@ class CutOptimizerApp:
         newCut.setDirPath("U:/Git Development/rsi.Brobo")
         newCut.setAuthor("Dylan")
         newCut.setStaringProgramNumber(4)
-        newCut.setFileName("test")
+        #newCut.setFileName("test")
         newCut.setDebug(True)
         newCut.buildSolution()
         newCut.print_solution()
